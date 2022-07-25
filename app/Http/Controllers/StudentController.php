@@ -15,7 +15,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = Student::paginate(10);
+        $students = Student::orderby('school_id', 'DESC')->get();
         return view('students.index')->withStudents($students);
     }
 
@@ -38,10 +38,10 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        $studentBySchool = Student::where('school_id', $request->school_id);
+        $studentByStudent = Student::where('school_id', $request->school_id);
 
-        if ($studentBySchool->count() > 0) {
-            $lastID = $studentBySchool->orderby('order', 'desc')->first();
+        if ($studentByStudent->count() > 0) {
+            $lastID = $studentByStudent->orderby('order', 'desc')->first();
             $order = ($lastID->order +1);
         } else {
             $order = 1;
@@ -58,16 +58,27 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
-        //
+        $schools = School::all();
+        return view('students.create')->withSchools($schools);
     }
 
     public function update(Request $request,$id)
     {
-        $student = new Student();
+        $student = Student::find($id);
         $student->name = $request->name;
         $student->school_id = $request->school_id;
-        $student->order = $order;
-        $student->save();
+
+        if ($student->school_id != $student->school_id) {
+            $studentByStudent = Student::where('school_id', $request->school_id);
+
+            if ($studentByStudent->count() > 0) {
+                $lastID = $studentByStudent->orderby('order', 'desc')->first();
+                $student->order = ($lastID->order +1);
+            } else {
+                $student->order = 1;
+            }
+        }
+        $student->update();
 
         return redirect()->back();
     }
@@ -75,13 +86,42 @@ class StudentController extends Controller
     public function trashed()
     {
         $schools = Student::onlyTrashed()->paginate(10);
-        return view('students.trached')->withSchools($schools);
+        return view('students.trached')->withStudents($schools);
     }
 
     public function destroy($id)
     {
-        $school = School::find($id);
-        $school->delete();
+        $student = Student::find($id);
+
+        Student::where('school_id', $student->school_id)->where('order','>', $student->order)->update([
+            'order' => \DB::raw('`order`-1')
+        ]);
+        
+
+        $student->delete();
+
+        return redirect()->back();
+    }
+
+    public function restore($id)
+    {
+        $student = Student::withTrashed()->find($id);
+
+        Student::where('id', '!=', $id)->
+        where('school_id', $student->school_id)
+        ->where('order','>=', $student->order)
+        ->update([
+            'order' => \DB::raw('`order`+1')
+        ]);
+
+        $student->restore();
+
+        return redirect()->back();
+    }
+
+    public function forceDelete($id)
+    {
+        $school = Student::withTrashed()->find($id)->forceDelete();
 
         return redirect()->back();
     }

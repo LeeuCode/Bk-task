@@ -33,7 +33,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/student/edit/{id}', [App\Http\Controllers\StudentController::class, 'edit'])->name('students.edit');
     Route::post('/student/store', [App\Http\Controllers\StudentController::class, 'store'])->name('student.store');
     Route::post('/student/update/{id}', [App\Http\Controllers\StudentController::class, 'update'])->name('student.update');
-    Route::delete('/student/delete/{id}', [App\Http\Controllers\StudentController::class, 'destroy'])->name('student.delete');
+    Route::delete('student/delete/{id}', [App\Http\Controllers\StudentController::class, 'destroy'])->name('student.delete');
     Route::post('/student/restore/{id}', [App\Http\Controllers\StudentController::class, 'restore'])->name('students.restore');
     Route::post('/student/force/delete/{id}', [App\Http\Controllers\StudentController::class, 'forceDelete'])->name('students.forceDelete');
 });
