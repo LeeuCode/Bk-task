@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('register', [PassportController::class, 'register']);
+Route::post('login', [PassportController::class, 'login']);
+
+// put all api protected routes here
+Route::middleware('auth:api')->group(function () {
+    Route::post('user-detail', [PassportController::class, 'userDetail']);
+    Route::post('logout', [PassportController::class, 'logout']);
 });
