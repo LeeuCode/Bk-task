@@ -30,6 +30,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('school/update/{id}', [SchoolController::class, 'update']);
     Route::post('school/delete/{id}', [SchoolController::class, 'delete']);
     Route::post('school/restore/{id}', [SchoolController::class, 'restore']);
+    Route::post('school/force/delete/{id}', [SchoolController::class, 'forceDelete']);
 
 
     // Student Api Route.

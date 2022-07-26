@@ -32,7 +32,7 @@ class AuthTest extends TestCase
     public function testLogin()
     {
         $email = time().'_test@gmail.com';
-        $password = bcrypt('123456789');
+        $password = '123456789';
 
         // Creating Users
         $user = User::create([
@@ -44,16 +44,11 @@ class AuthTest extends TestCase
         // Simulated landing
         $response = $this->json('POST','api/login',[
             'email' => $email,
-            'password' => ,
+            'password' => $password,
         ]);
 
         // Determine whether the login is successful and receive token 
         $response->assertStatus(200);
-
-        dd($response->json());
-        // $this->assertArrayHasKey('token',$response->json());
-
-        // Delete users
-        // User::where('email',$email)->delete();
+        $this->assertArrayHasKey('token',$response->json());
     }
 }

@@ -52,7 +52,7 @@ class StudentController extends Controller
         $student->name = $request->name;
         $student->school_id = $request->school_id;
 
-        if ($student->school_id != $student->school_id) {
+        if ($student->school_id != $request->school_id) {
             $studentByStudent = Student::where('school_id', $request->school_id);
 
             if ($studentByStudent->count() > 0) {
@@ -62,6 +62,7 @@ class StudentController extends Controller
                 $student->order = 1;
             }
         }
+
         $student->update();
 
         return response()->json([
